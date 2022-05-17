@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Todolist2} from "./components/Todolist2";
 
 export type ScheduleArrType = Array<ScheduleType>
@@ -7,9 +7,10 @@ export type ScheduleType = {
     item: string
     isDone: boolean
 }
+export type FilterType = 'all' | 'completed' | 'skipped'
 
 
-const schedule = [
+const schedule: ScheduleArrType = [
     {id: 101, item: "Waking up", isDone: true},
     {id: 102, item: "Exercise", isDone: false},
     {id: 103, item: "Washing", isDone: false},
@@ -27,9 +28,29 @@ const schedule = [
 
 
 function App() {
+
+    const [filter, setFilter] = useState('all')
+    const [item, setItem] = useState(schedule);
+
+    const deleteItem = (id: number) => {
+        setItem(item.filter((it) => it.id !== id))
+    }
+
+    let itemList = item;
+    if (filter === 'completed') {
+        itemList = item.filter(it => it.isDone)
+    }
+    if (filter === 'skipped') {
+        itemList = item.filter(it => !it.isDone)
+    }
+
+    const filterListHandler = (filterName: FilterType) => {
+        setFilter(filterName)
+    }
+
     return (
         <div>
-            <Todolist2 heading={'Daily Schedule'} schedule={schedule}/>
+            <Todolist2 heading={'Daily Schedule'} itemList={itemList} deleteItem={deleteItem} filterListHandler={filterListHandler}/>
 
 
         </div>
