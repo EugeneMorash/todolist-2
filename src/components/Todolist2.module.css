@@ -1,0 +1,21 @@
+.invalid {
+    border: 2px solid red;
+    border-radius: 3px;
+}
+.invalid:focus {
+    outline-color: red;
+}
+
+.errorName {
+    color: red;
+    font-weight: bold;
+}
+
+.isDone {
+    opacity: 0.5;
+    text-decoration: line-through;
+}
+
+.chooseFilter {
+    background-color: lightgreen;
+}

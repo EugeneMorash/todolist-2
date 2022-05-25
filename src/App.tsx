@@ -1,58 +1,63 @@
 import React, {useState} from 'react';
 import {Todolist2} from "./components/Todolist2";
+import {v1} from "uuid";
+import {ScheduleArrType, ScheduleType} from "./index";
 
-export type ScheduleArrType = Array<ScheduleType>
-export type ScheduleType = {
-    id: number
-    item: string
-    isDone: boolean
-}
+
 export type FilterType = 'all' | 'completed' | 'skipped'
+type AppPropsType = {
+    state: ScheduleArrType
+}
 
+function App(props: AppPropsType) {
+    const [list, setList] = useState<ScheduleArrType>(props.state);
+    const deleteItem = (id: string) => {
+        setList(list.filter((it) => it.id !== id))
+    }
+    const addNewTask = (newTaskText: string) => {
 
-const schedule: ScheduleArrType = [
-    {id: 101, item: "Waking up", isDone: true},
-    {id: 102, item: "Exercise", isDone: false},
-    {id: 103, item: "Washing", isDone: false},
-    {id: 104, item: "Breakfast", isDone: true},
-    {id: 105, item: "Lazy time", isDone: true},
-    {id: 106, item: "Lunch", isDone: true},
-    {id: 107, item: "Horse racing", isDone: false},
-    {id: 108, item: "Afternoon tea", isDone: true},
-    {id: 109, item: "Snooker", isDone: true},
-    {id: 110, item: "Dinner", isDone: true},
-    {id: 111, item: "Cigar time", isDone: true},
-    {id: 112, item: "Washing", isDone: false},
-    {id: 113, item: "Putting to bed", isDone: true}
-]
-
-
-function App() {
-
-    const [filter, setFilter] = useState('all')
-    const [item, setItem] = useState(schedule);
-
-    const deleteItem = (id: number) => {
-        setItem(item.filter((it) => it.id !== id))
+        const newTask: ScheduleType = {
+            id: v1(),
+            item: newTaskText,
+            isDone: false
+        }
+        setList([newTask, ...list])
     }
 
-    let itemList = item;
-    if (filter === 'completed') {
-        itemList = item.filter(it => it.isDone)
-    }
-    if (filter === 'skipped') {
-        itemList = item.filter(it => !it.isDone)
+    const changeStatus = (id: string, isDone: boolean) => {
+
+        // const newArr = list.map(i => {
+        //     return i.id === id ? { ...i, isDone: isDone } : i
+        // })
+        // setList(newArr);
+
+        setList(list.map(i => i.id === id ? { ...i, isDone } : i));
     }
 
+
+    const [filter, setFilter] = useState<FilterType>('all')
     const filterListHandler = (filterName: FilterType) => {
         setFilter(filterName)
     }
+    let itemList = list;
+    if (filter === 'completed') {
+        itemList = list.filter(it => it.isDone)
+    }
+    if (filter === 'skipped') {
+        itemList = list.filter(it => !it.isDone)
+    }
+
 
     return (
         <div>
-            <Todolist2 heading={'Daily Schedule'} itemList={itemList} deleteItem={deleteItem} filterListHandler={filterListHandler}/>
-
-
+            <Todolist2 heading={'Daily Schedule'}
+                       itemList={itemList}
+                       deleteItem={deleteItem}
+                       filterListHandler={filterListHandler}
+                       addNewTask={addNewTask}
+                       changeStatus={changeStatus}
+                       filter={filter}
+            />
         </div>
     );
 }
